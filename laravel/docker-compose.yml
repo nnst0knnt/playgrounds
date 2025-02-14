@@ -1,0 +1,117 @@
+services:
+    app:
+        container_name: app-container
+        build:
+            context: ./containers/php/8.3
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: sail-8.3/app
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${FORWARD_APP_PORT:-80}:80'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        depends_on:
+            db:
+                condition: service_healthy
+            mail:
+                condition: service_started
+    db:
+        container_name: db-container
+        build:
+            context: ./containers/mysql
+            dockerfile: Dockerfile
+        ports:
+            - '${FORWARD_DB_PORT:-3306}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - 'db-store:/var/lib/mysql'
+            - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+            - './containers/mysql/my.cnf:/etc/my.cnf'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - '-p${DB_PASSWORD}'
+            retries: 3
+            timeout: 5s
+    db.client:
+        container_name: db-client-container
+        image: adminer:4.8.1
+        restart: always
+        ports:
+            - '${FORWARD_DB_CLIENT_PORT:-8080}:8080'
+        environment:
+            ADMINER_DEFAULT_SERVER: db
+            ADMINER_DESIGN: hydra
+        networks:
+            - sail
+        depends_on:
+            - db
+    db.schema:
+        container_name: db-schema-container
+        build:
+            context: ./containers/schemaspy
+            dockerfile: Dockerfile
+        volumes:
+            - 'db-schema-store:/output'
+        command: >
+            java -jar /drivers/mysql-connector-java-8.0.30.jar
+            -t mysql
+            -host ${DB_HOST}
+            -port ${DB_PORT}
+            -db ${DB_DATABASE}
+            -u ${DB_USERNAME}
+            -p ${DB_PASSWORD}
+            -s ${DB_DATABASE}
+            -connprops allowPublicKeyRetrieval\\=true;useSSL\\=false
+        networks:
+            - sail
+        depends_on:
+            db:
+                condition: service_healthy
+    db.schema.web:
+        container_name: db-schema-web-container
+        image: nginx
+        ports:
+            - '${FORWARD_DB_SCHEMA_WEB_PORT:-8080}:80'
+        volumes:
+            - 'db-schema-store:/usr/share/nginx/html'
+        networks:
+            - sail
+        depends_on:
+            - db.schema
+    mail:
+        container_name: mail-container
+        image: 'axllent/mailpit:latest'
+        ports:
+            - '${FORWARD_MAIL_PORT:-1025}:1025'
+            - '${FORWARD_MAIL_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - sail
+networks:
+    sail:
+        driver: bridge
+volumes:
+    db-store:
+        driver: local
+    db-schema-store:
+        driver: local
