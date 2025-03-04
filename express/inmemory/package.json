@@ -1,16 +1,22 @@
 {
-  "name": "permanent",
-  "version": "0.0.0",
+  "name": "@nnst0knnt/express-inmemory",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "npm:deps": "ncu",
+    "npm:update-i": "ncu -i",
+    "npm:update-all": "ncu -u"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "ejs": "~2.6.1",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "morgan": "~1.9.1"
+    "cookie-parser": "~1.4.7",
+    "debug": "~4.4.0",
+    "ejs": "~3.1.10",
+    "express": "~4.21.2",
+    "http-errors": "~2.0.0",
+    "morgan": "~1.10.0"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^17.1.15"
   }
 }
