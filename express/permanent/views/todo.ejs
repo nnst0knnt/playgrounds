@@ -13,6 +13,9 @@
         <input type="submit" value="ログアウト">
     </form>
     <form id="todo-form" action="/" method="post" onsubmit="return false;">
+		<% if (locals.error) { %>
+            <p><%= error %></p>
+        <% } %>
         <label>TODOの追加</label>
         <input required id="todo-text" type="text" name="content" placeholder="何をする？">
         <input id="add-button" type="button" value="追加" onclick="submit()">

@@ -3,6 +3,11 @@ import { get } from "@/libs/http";
 
 import type { GetListResponse } from "@/features/articles";
 
+/**
+ * skip prerendering
+ */
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const articles = await getArticles();
 

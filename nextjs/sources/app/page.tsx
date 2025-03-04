@@ -1,6 +1,11 @@
 import { HEADLINES, Welcome } from "@/features/home";
 import { db } from "@/libs/db";
 
+/**
+ * skip prerendering
+ */
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const headlines = await getHeadlines();
 
