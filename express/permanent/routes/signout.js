@@ -1,8 +1,8 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
-router.get('/', function (req, res) {
-  req.session = null;
-  res.redirect('/signin');
+router.get("/", (req, res) => {
+	req.session = null;
+	res.redirect("/signin");
 });
 
 module.exports = router;

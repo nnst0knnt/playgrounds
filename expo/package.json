@@ -9,7 +9,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "npm:deps": "ncu",
+    "npm:update-i": "ncu -i",
+    "npm:update-all": "ncu -u"
   },
   "jest": {
     "preset": "jest-expo"
@@ -47,6 +50,7 @@
     "@types/react-test-renderer": "^18.3.0",
     "jest": "^29.2.1",
     "jest-expo": "~52.0.4",
+    "npm-check-updates": "^17.1.15",
     "react-test-renderer": "18.3.1",
     "typescript": "^5.3.3"
   },

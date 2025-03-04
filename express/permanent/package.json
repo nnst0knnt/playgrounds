@@ -1,20 +1,39 @@
 {
-  "name": "permanent",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "start": "node ./bin/www"
-  },
-  "dependencies": {
-    "bcrypt": "^5.1.0",
-    "cookie-parser": "~1.4.4",
-    "cookie-session": "^2.0.0",
-    "debug": "~2.6.9",
-    "ejs": "~2.6.1",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "morgan": "~1.9.1",
-    "mysql": "^2.18.1",
-    "util": "^0.12.4"
-  }
+	"name": "@nnst0knnt/express-permanent",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"start": "node ./bin/www",
+		"format": "biome format --write",
+		"lint": "biome lint --write",
+		"ci": "npm run format && npm run lint",
+		"npm:deps": "ncu",
+		"npm:update-i": "ncu -i",
+		"npm:update-all": "ncu -u",
+		"db:start": "docker run --name nnst0knnt-express-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=app -e MYSQL_USER=user@app -e MYSQL_PASSWORD=password@express -p 3306:3306 -v \"$(pwd)/repositories/app.sql:/docker-entrypoint-initdb.d/app.sql\" -d mysql:8.0 --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci",
+		"db:stop": "docker stop nnst0knnt-express-db 2>/dev/null || true && docker rm nnst0knnt-express-db 2>/dev/null || true",
+		"db:restart": "npm run db:stop && npm run db:start",
+		"db:destroy": "docker stop nnst0knnt-express-db 2>/dev/null || true && docker rm nnst0knnt-express-db 2>/dev/null || true && docker rmi mysql:8.0 2>/dev/null || true && docker volume prune -f",
+		"db:rebuild": "npm run db:destroy && npm run db:start",
+		"db:connect": "docker ps -q -f name=nnst0knnt-express-db >/dev/null 2>&1 && docker exec -it nnst0knnt-express-db mysql -u user@app -ppassword@express app || echo \"Error: Database container is not running. Start it with 'npm run db:start'\"",
+		"db:connect:root": "docker ps -q -f name=nnst0knnt-express-db >/dev/null 2>&1 && docker exec -it nnst0knnt-express-db mysql -u root -ppassword || echo \"Error: Database container is not running. Start it with 'npm run db:start'\"",
+		"db:logs": "docker ps -q -f name=nnst0knnt-express-db >/dev/null 2>&1 && docker logs nnst0knnt-express-db || echo \"Error: Database container not found\"",
+		"db:status": "docker ps -f name=nnst0knnt-express-db || echo \"No running containers found\""
+	},
+	"dependencies": {
+		"bcrypt": "^5.1.1",
+		"cookie-parser": "~1.4.7",
+		"cookie-session": "^2.1.0",
+		"debug": "~4.4.0",
+		"ejs": "~3.1.10",
+		"express": "~4.21.2",
+		"http-errors": "~2.0.0",
+		"morgan": "~1.10.0",
+		"mysql": "^2.18.1",
+		"util": "^0.12.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"npm-check-updates": "^17.1.15"
+	}
 }

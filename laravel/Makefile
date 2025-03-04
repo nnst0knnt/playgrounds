@@ -1,10 +1,19 @@
-install: ## プロジェクトをインストールします
+.PHONY: help install rebuild up down destroy restart ps test format lint ci ide-apply app-shell db-shell tinker route cache-clear insight db-migrate db-seed db-fresh
+
+# Default target is help
+.DEFAULT_GOAL := help
+
+## @description Install the project
+## @usage make install
+install:
+	-cp -n .env.example .env
+	docker compose build --no-cache
 	docker run --rm \
 	    -u "$(shell id -u):$(shell id -g)" \
 	    -v "$(shell pwd):/var/www/html" \
 	    -w /var/www/html \
 	    laravelsail/php83-composer:latest \
-	    composer install --ignore-platform-reqs && cp -a -n .env.example .env
+	    composer install --ignore-platform-reqs
 	@make up
 	@make cache-clear
 	./vendor/bin/sail artisan key:generate
@@ -12,79 +21,149 @@ install: ## プロジェクトをインストールします
 	@make db-migrate
 	@make db-seed
 	@make ide-apply
-	@make up
+	@make restart
+	@echo "╔═════════════════════════════════════════════════════════════╗"
+	@echo "║                                                             ║"
+	@echo "║                      Setup Complete!                        ║"
+	@echo "║                                                             ║"
+	@echo "║                Project is now ready to use                  ║"
+	@echo "║                                                             ║"
+	@echo "╚═════════════════════════════════════════════════════════════╝"
 
-rebuild: ## プロジェクトを再構築します
+## @description Rebuild the project from scratch
+## @usage make rebuild
+rebuild:
 	@make destroy
-	docker compose build --no-cache
 	@make install
 
-up: ## コンテナを起動します
+## @description Start containers
+## @usage make up
+up:
 	./vendor/bin/sail up -d
 
-down: ## コンテナを停止します
+## @description Stop containers
+## @usage make down
+down:
 	docker compose down --remove-orphans
 
-destroy: ## 全てのコンテナを削除します
+## @description Remove all containers, volumes and images
+## @usage make destroy
+destroy:
 	docker compose down -v --remove-orphans --rmi all
 
-restart: ## コンテナを再起動します
+## @description Restart containers
+## @usage make restart
+restart:
 	@make down
 	@make up
 
-ps: ## コンテナの状態を表示します
+## @description Show container status
+## @usage make ps
+ps:
 	docker compose ps
 
-test: ## テストを実行します
+## @description Run tests
+## @usage make test
+test:
 	./vendor/bin/sail test
 
-format: ## コードをフォーマットします
+## @description Format code
+## @usage make format
+format:
 	./vendor/bin/sail pint
 
-lint: ## 静的解析を実行します
+## @description Run static analysis
+## @usage make lint
+lint:
 	docker compose exec app ./vendor/bin/phpstan analyse
 
-ide-apply: ## IDE補完用のファイルを更新します
+## @description Run CI commands (format, lint, test)
+## @usage make ci
+ci:
+	@make format
+	@make lint
+	@make test
+
+## @description Update IDE helper files
+## @usage make ide-apply
+ide-apply:
 	./vendor/bin/sail artisan ide-helper:generate
 	./vendor/bin/sail artisan ide-helper:models -N
 	./vendor/bin/sail artisan ide-helper:meta
 
-app-shell: ## アプリケーションのコンテナに入ります
+## @description Enter application container shell
+## @usage make app-shell
+app-shell:
 	./vendor/bin/sail shell
 
-db-shell: ## データベースのコンテナに入ります
+## @description Enter database container shell
+## @usage make db-shell
+db-shell:
 	docker compose exec db mysql -u sail -ppassword --database=local
 
-tinker: ## Tinkerを起動します
+## @description Start Tinker
+## @usage make tinker
+tinker:
 	./vendor/bin/sail tinker
 
-route: ## ルート一覧を表示します
+## @description List all routes
+## @usage make route
+route:
 	./vendor/bin/sail artisan route:list
 
-cache-clear: ## キャッシュをクリアします
+## @description Clear all caches
+## @usage make cache-clear
+cache-clear:
 	./vendor/bin/sail artisan optimize:clear
 
-insight: ## PHP Insightsを表示します
+## @description Show PHP Insights
+## @usage make insight
+insight:
 	./vendor/bin/sail artisan insights
 
-db-migrate: ## データベースをマイグレートします
+## @description Run database migrations
+## @usage make db-migrate
+db-migrate:
 	./vendor/bin/sail artisan migrate
 
-db-seed: ## データベースにデータを投入します
+## @description Seed the database
+## @usage make db-seed
+db-seed:
 	./vendor/bin/sail artisan db:seed
 
-db-fresh: ## データベースを初期化します
+## @description Reset and re-seed database
+## @usage make db-fresh
+db-fresh:
 	./vendor/bin/sail artisan migrate:fresh --seed
 
 help:
-	@printf "\033[33m%-30s\033[0m %s\n" "コマンド一覧:"
-	@awk -F ':.*?## ' \
-		'/^[a-zA-Z0-9_\-]+:/ { \
+	@WIDTH=`tput cols 2>/dev/null || echo 80`; \
+	awk 'BEGIN { \
+		box_width = 65; \
+		padding_left = int(('$$WIDTH' - box_width) / 2); \
+		if (padding_left < 0) padding_left = 0; \
+		padding = sprintf("%*s", padding_left, ""); \
+		print padding "╔═════════════════════════════════════════════════════════════╗"; \
+		print padding "║                                                             ║"; \
+		print padding "║                     Makefile Help Menu                      ║"; \
+		print padding "║                                                             ║"; \
+		print padding "╚═════════════════════════════════════════════════════════════╝"; \
+		print ""; \
+	}'
+	@awk 'BEGIN { description = ""; usage = ""; } \
+		/^## @description/ { description = substr($$0, index($$0, $$3)); } \
+		/^## @usage/ { usage = substr($$0, index($$0, $$3)); } \
+		/^[a-zA-Z0-9_\-]+:/ { \
 			helpCommand = $$1; \
-			helpMessage = $$2; \
-			gsub(/:.*?## /, "", helpCommand); \
-			if (helpMessage != "" && helpCommand != "") { \
-				printf "  \033[32m%-30s\033[0m %s\n", helpCommand, helpMessage; \
+			if (description != "") { \
+				printf "  \033[32m%-30s\033[0m %s\n", helpCommand, description; \
+				if (usage != "") { \
+					printf "  \033[36m%-30s\033[0m %s%s\n\n", "", "▶️ ", usage; \
+				} \
 			} \
-		}' \
-		$(MAKEFILE_LIST)
+			description = ""; usage = ""; \
+		}' $(MAKEFILE_LIST)
+
+# Catch-all target to allow passing arguments
+%:
+	@:
