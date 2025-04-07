@@ -7,7 +7,7 @@ import { ArrowLeft } from "lucide-react";
 
 export default function Page() {
   return (
-    <div className="h-full bg-slate-50 flex items-center justify-center">
+    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-50 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

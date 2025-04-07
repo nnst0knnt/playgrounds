@@ -1,11 +1,12 @@
-const query = require('./query');
+const query = require("./query");
 
-const get = (userId) => {
-    return query(`select * from tasks where user_id = ${userId}`);
-};
+const get = (userId) =>
+	query("select * from tasks where user_id = ?", [userId]);
 
-const insert = (userId, text) => {
-    return query(`insert into tasks (user_id, content) values (${userId}, '${text}');`);
-};
+const insert = (userId, content) =>
+	query("insert into tasks (user_id, content) values (?, ?)", [
+		userId,
+		content,
+	]);
 
 module.exports = { get, insert };
