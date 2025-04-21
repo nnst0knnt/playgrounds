@@ -1,0 +1,24 @@
+USE app;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tasks (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+INSERT INTO users (name, password) VALUES 
+('test', '$2a$10$bxRuBdTLPrlhfEl4ksQP6OSoDJgjZOzZ3s7JVeIm4DHgMPxzMn2Ku');
+
+INSERT INTO tasks (user_id, content) VALUES 
+(1, 'task A'),
+(1, 'task B'),
+(1, 'task C');
