@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { ArticleContent } from "@/features/articles";
 import { NotFound } from "@/libs/exceptions";
 import { get } from "@/libs/http";
@@ -11,11 +13,11 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  if (!id) throw new NotFound();
+  if (!id) notFound();
 
   const article = await getArticle(id);
 
-  if (article === null) throw new NotFound();
+  if (article === null) notFound();
 
   return <ArticleContent article={article} />;
 }

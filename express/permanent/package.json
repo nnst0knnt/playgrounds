@@ -21,10 +21,10 @@
 		"db:status": "docker ps -f name=nnst0knnt-express-db || echo \"No running containers found\""
 	},
 	"dependencies": {
-		"bcrypt": "^5.1.1",
+		"bcrypt": "^6.0.0",
 		"cookie-parser": "~1.4.7",
 		"cookie-session": "^2.1.0",
-		"debug": "~4.4.0",
+		"debug": "~4.4.1",
 		"ejs": "~3.1.10",
 		"express": "~5.1.0",
 		"http-errors": "~2.0.0",
@@ -33,7 +33,7 @@
 		"util": "^0.12.5"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.1.1",
 		"npm-check-updates": "^18.0.1"
 	}
 }
