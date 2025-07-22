@@ -57,17 +57,17 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
-    "doctrine/dbal": "^4.2",
+    "doctrine/dbal": "^4.3",
     "guzzlehttp/guzzle": "^7.9",
     "laravel/framework": "^12.20"
   },
   "require-dev": {
-    "barryvdh/laravel-ide-helper": "^3.5",
+    "barryvdh/laravel-ide-helper": "^3.6",
     "fakerphp/faker": "^1.24",
     "itsgoingd/clockwork": "^5.3",
-    "larastan/larastan": "^3.5",
+    "larastan/larastan": "^3.6",
     "laravel-lang/lang": "^15.22",
-    "laravel/pint": "^1.23",
+    "laravel/pint": "^1.24",
     "laravel/sail": "^1.43",
     "laravel/telescope": "^5.10",
     "laravel/tinker": "^2.10",
