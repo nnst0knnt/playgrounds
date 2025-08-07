@@ -56,6 +56,11 @@
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
+  "require": {
+    "doctrine/dbal": "^4.3",
+    "guzzlehttp/guzzle": "^7.9",
+    "laravel/framework": "^12.21"
+  },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^3.6",
     "fakerphp/faker": "^1.24",
@@ -69,12 +74,7 @@
     "mockery/mockery": "^1.6",
     "nunomaduro/collision": "^8.8",
     "nunomaduro/phpinsights": "^2.13",
-    "phpunit/phpunit": "^12.2",
+    "phpunit/phpunit": "^12.3",
     "spatie/laravel-ignition": "^2.9"
-  },
-  "require": {
-    "doctrine/dbal": "^4.3",
-    "guzzlehttp/guzzle": "^7.9",
-    "laravel/framework": "^12.21"
   }
 }
