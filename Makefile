@@ -20,7 +20,7 @@ update-deps:
 			&& cd .. \
 		&& cd ..
 	cd laravel \
-		&& rm -rf vendor composer.lock \
+		&& sudo rm -rf vendor composer.lock \
 		&& make rebuild \
 		&& docker compose exec app bash -c "composer install && composer update" \
 		&& cd ..
