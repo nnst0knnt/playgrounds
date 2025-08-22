@@ -59,14 +59,14 @@
   "require": {
     "doctrine/dbal": "^4.3",
     "guzzlehttp/guzzle": "^7.9",
-    "laravel/framework": "^12.24"
+    "laravel/framework": "^12.25"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^3.6",
     "fakerphp/faker": "^1.24",
     "itsgoingd/clockwork": "^5.3",
     "larastan/larastan": "^3.6",
-    "laravel-lang/lang": "^15.22",
+    "laravel-lang/lang": "^15.23",
     "laravel/pint": "^1.24",
     "laravel/sail": "^1.44",
     "laravel/telescope": "^5.11",
