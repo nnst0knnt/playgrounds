@@ -33,7 +33,7 @@
 		"util": "^0.12.5"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.2.0",
-		"npm-check-updates": "^18.0.2"
+		"@biomejs/biome": "2.2.2",
+		"npm-check-updates": "^18.0.3"
 	}
 }
