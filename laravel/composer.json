@@ -59,7 +59,7 @@
   "require": {
     "doctrine/dbal": "^4.3",
     "guzzlehttp/guzzle": "^7.10",
-    "laravel/framework": "^12.26"
+    "laravel/framework": "^12.28"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^3.6",
